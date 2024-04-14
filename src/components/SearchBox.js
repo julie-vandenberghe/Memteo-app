@@ -54,8 +54,10 @@ export const SearchBox = ({ onWeatherInput, setLoadingCity }) => {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     // console.log("Formulaire soumis", city);
-    if (error) {
-      setError("Location not found");
+    if (error || city.length) {
+        setError("Location not found");
+        //efface le message de erreur
+        setTimeout(setError, 3000, "");
     } else {
       setError("");
       // Appel de la fonction de gestion de la ville dans l'app component
