@@ -78,9 +78,12 @@ export const SearchBox = ({ onWeatherInput, setLoadingCity }) => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
-        onWeatherInput(`${latitude},${longitude}`);
+          onWeatherInput(`${latitude},${longitude}`);
+      }, (error) => {
+          //in case of user denied hide loading skeleton
+          setLoadingCity(false);
       });
-    }
+      }
   };
 
   return (
