@@ -104,6 +104,8 @@ export const SearchBox = ({ onWeatherInput, setLoadingCity }) => {
           placeholder="Tapez votre recherche ici..."
           value={city}
           onChange={(e) => handleInputChange(e.target.value)}
+          type="text"
+          x-webkit-speech
         />
         <SuggestionBox
           {...{ showSuggestions, showFavoris, suggestions, handleSuggestionClick, error }}
