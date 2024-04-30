@@ -23,20 +23,22 @@ export const SearchBox = ({ onWeatherInput, setLoadingCity }) => {
 
   async function handleInputChange(value) {
     setCity(value);
-
     if (value.length >= 3) {
       try {
         const response = await fetch(
           `https://api.weatherapi.com/v1/search.json?key=${apiWeather}&q=${value}`
-        );
+          );
+        //si pas de reponse
         if (!response.ok) {
-          throw new Error("Ville non trouvée");
+            throw new Error("Ville non trouvée");
         }
-
-        const data = await response.json();
-
+          
+       const data = await response.json();
+       //si aucune ville non trouvee
+        if (!data.length) {
+            throw new Error("Ville non trouvée");
+        }
         const suggestions = data.map((item) => `${item.name}, ${item.country}`);
-        // console.log(suggestions);
         setSuggestions(suggestions || []);
         setError("");
         setShowSuggestions(true);
@@ -52,10 +54,12 @@ export const SearchBox = ({ onWeatherInput, setLoadingCity }) => {
 
   //soumission du formulaire ou la props reprends le nom de la city pour la véhiculer sur App
   const handleFormSubmit = (e) => {
-    e.preventDefault();
-    // console.log("Formulaire soumis", city);
-    if (error) {
-      setError("Location not found");
+      e.preventDefault();
+      // recherche la meteo si au mons une ville a ete suggere,sinon c est que n imp' a ete saisie
+      if (error || !showSuggestions) {
+        setError("Location not found");
+        //efface le message de erreur
+        setTimeout(setError, 3000, "");
     } else {
       setError("");
       // Appel de la fonction de gestion de la ville dans l'app component
@@ -78,9 +82,12 @@ export const SearchBox = ({ onWeatherInput, setLoadingCity }) => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
-        onWeatherInput(`${latitude},${longitude}`);
+          onWeatherInput(`${latitude},${longitude}`);
+      }, (error) => {
+          //in case of user denied hide loading skeleton
+          setLoadingCity(false);
       });
-    }
+      }
   };
 
   return (
